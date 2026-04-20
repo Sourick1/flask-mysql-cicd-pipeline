@@ -48,12 +48,17 @@ pipeline {
         stage("Deploy to EC2") {
             steps {
                 sshagent(['ec2-ssh']) {
-                    sh """
+                    withCredentials([usernamePassword(
+                        credentialsId: "dockehub",
+                        usernameVariable: "USER",
+                        passwordVariable: "PASS"
+                    )]) {
+
+                        sh """
 ssh -tt -o StrictHostKeyChecking=no ubuntu@43.204.216.179 << EOF
 
 cd /home/ubuntu || exit
 
-# Clone if not exists
 if [ ! -d "flask-mysql-docker-app" ]; then
     git clone https://github.com/Sourick1/flask-mysql-docker-app.git
 fi
@@ -61,14 +66,14 @@ fi
 cd flask-mysql-docker-app
 git pull origin main
 
-# Create env file
 cp .env.example .env || true
 
 echo "Cleaning old containers..."
-
-# Stop + remove everything (THIS FIXES YOUR ERROR)
 docker compose down -v || true
 docker rm -f \$(docker ps -aq) || true
+
+echo "Docker login..."
+echo "$PASS" | docker login -u "$USER" --password-stdin
 
 echo "Pulling latest image..."
 docker pull sourick1/flask-mysql-docker-app:latest
@@ -80,6 +85,7 @@ echo "Deployment Completed Successfully"
 
 EOF
 """
+                    }
                 }
             }
         }
