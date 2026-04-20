@@ -55,7 +55,7 @@ pipeline {
                     )]) {
 
                         sh """
-ssh -tt -o StrictHostKeyChecking=no ubuntu@43.204.216.179 << EOF
+ssh -o StrictHostKeyChecking=no ubuntu@43.204.216.179 << EOF
 
 cd /home/ubuntu || exit
 
