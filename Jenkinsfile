@@ -49,29 +49,37 @@ pipeline {
             steps {
                 sshagent(['ec2-ssh']) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no ubuntu@43.204.216.179 << EOF
-                    cd /home/ubuntu || exit
+ssh -tt -o StrictHostKeyChecking=no ubuntu@43.204.216.179 << EOF
 
-                    if [ ! -d "flask-mysql-docker-app" ]; then
-                        git clone https://github.com/Sourick1/flask-mysql-docker-app.git
-                    fi
+cd /home/ubuntu || exit
 
-                    cd flask-mysql-docker-app
-                    git pull origin main
+# Clone if not exists
+if [ ! -d "flask-mysql-docker-app" ]; then
+    git clone https://github.com/Sourick1/flask-mysql-docker-app.git
+fi
 
-                    cp .env.example .env || true
+cd flask-mysql-docker-app
+git pull origin main
 
-                    # CLEAN EVERYTHING
-                    docker compose down -v || true
-                    docker rm -f flask_mysql_db || true
-                    docker rm -f flask_app || true
+# Create env file
+cp .env.example .env || true
 
-                    docker pull $DOCKER_IMAGE:$TAG
+echo "Cleaning old containers..."
 
-                    docker compose up -d
+# Stop + remove everything (THIS FIXES YOUR ERROR)
+docker compose down -v || true
+docker rm -f \$(docker ps -aq) || true
 
-                    EOF
-                    """
+echo "Pulling latest image..."
+docker pull sourick1/flask-mysql-docker-app:latest
+
+echo "Starting containers..."
+docker compose up -d
+
+echo "Deployment Completed Successfully"
+
+EOF
+"""
                 }
             }
         }
