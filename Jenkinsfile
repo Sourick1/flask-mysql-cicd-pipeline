@@ -48,14 +48,25 @@ pipeline {
         stage("Deploy to EC2") {
             steps {
                 sshagent(['ec2-ssh']) {
-                    sh '''
+                    sh """
                     ssh -o StrictHostKeyChecking=no ubuntu@65.0.108.215 << EOF
-                    docker pull $DOCKER_IMAGE:$TAG
-                    docker stop flaskapp || true
-                    docker rm flaskapp || true
-                    docker run -d -p 5000:5000 --name flaskapp $DOCKER_IMAGE:$TAG
+                    cd /home/ubuntu || exit
+
+                    if [ ! -d "flask-mysql-docker-app" ]; then
+                        git clone https://github.com/Sourick1/flask-mysql-docker-app.git
+                    fi
+
+                    cd flask-mysql-docker-app
+                    git pull origin main
+
+                    cp .env.example .env || true
+
+                    sudo docker compose down -v || true
+                    sudo docker pull sourick1/flask-mysql-docker-app:latest
+                    sudo docker compose up -d
+
                     EOF
-                    '''
+                    """
                 }
             }
         }
