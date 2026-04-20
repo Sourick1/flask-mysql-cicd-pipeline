@@ -67,7 +67,7 @@ User
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/Sourick1/flask-mysql-docker-app.git
+git clone https://github.com/Sourick1/flask-mysql-cicd-pipeline.git
 cd flask-mysql-docker-app
 
 2. Setup Environment Variables
