@@ -1,75 +1,105 @@
-# 🚀 Flask + MySQL Deployment on AWS with CI/CD
+🚀 Flask + MySQL Two-Tier Application with CI/CD (Docker + Jenkins + AWS)
+🔥 Fully automated CI/CD pipeline using Jenkins, Docker, Webhooks & AWS EC2
 
-A production-like DevOps project demonstrating deployment of a Flask application using Docker, Jenkins CI/CD, and AWS services.
+📌 Overview
+This project demonstrates a complete DevOps workflow by building and deploying a two-tier application using:
 
----
+Flask → Backend application
+MySQL → Database
+Docker & Docker Compose → Containerization
+Jenkins → CI/CD Pipeline
+GitHub Webhooks → Automation trigger
+AWS EC2 → Deployment
+👉 Fully automated pipeline:
+Code Push → Build → Test → Deploy → Live Application
 
-## 📌 Tech Stack
+🏗️ Architecture
+Developer (GitHub Push) ↓ GitHub Webhook ↓ Jenkins ↓ Build Docker Image ↓ Deploy to EC2 (Docker Compose) ↓ Flask App ↔ MySQL Database ↓ User
 
-- **Backend:** Flask (Python)
-- **Database:** MySQL (AWS RDS)
-- **Containerization:** Docker
-- **CI/CD:** Jenkins
-- **Cloud:** AWS EC2, RDS, S3
-- **Version Control:** Git & GitHub
-
----
-
-## 🧩 Architecture
-
-User → EC2 (Flask App in Docker) → RDS (MySQL)  → S3 (File Storage)
-
----
-
-## ⚙️ Features
-
-- Dockerized Flask application
-- Jenkins CI/CD pipeline (build → test → deploy)
-- AWS EC2 deployment
-- AWS RDS for managed MySQL database
-- AWS S3 integration using boto3
-- Secure configuration using environment variables
-
----
-
-## 🔄 CI/CD Pipeline Flow
-
-1. Developer pushes code to GitHub
-2. Jenkins webhook triggers pipeline
-3. Jenkins builds Docker image
-4. Image is deployed to EC2
-5. Application connects to RDS
-6. Files stored/retrieved from S3
-
----
-
-## 🚀 Setup Instructions
-
-### 1. Clone Repo
-```bash
+⚙️ CI/CD Workflow
+Developer pushes code to GitHub
+GitHub Webhook triggers Jenkins pipeline
+Jenkins executes:
+Checkout code
+Build Docker image
+Run tests
+Deploy containers using Docker Compose
+Application is updated automatically on EC2
+🐳 Tech Stack
+Python (Flask)
+MySQL
+Docker
+Docker Compose
+Jenkins
+AWS EC2
+Git & GitHub Webhooks
+📂 Project Setup (Local)
+1. Clone Repository
 git clone https://github.com/Sourick1/flask-mysql-cicd-pipeline.git
-cd flask-aws-devops-project
+cd flask-mysql-docker-app
 
-2. Configure Environment Variables
+2. Setup Environment Variables
+cp .env.example .env
 
-Create .env file:
+3. Run Application
+docker compose up -d --build
+🌐 Access Application
+Local: http://localhost:5000
+EC2: http://<your-ec2-public-ip>:5000
 
-DB_HOST=your-rds-endpoint
-DB_USER=your-username
-DB_PASSWORD=your-password
-DB_NAME=your-db-name
+🗄️ Database Setup
 
+If the table is not auto-created:
 
+CREATE TABLE messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    content TEXT,
+    author VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+🔍 Verification
+docker ps
+docker logs flask_app
 
-3. Run with Docker
-docker-compose up --build
+💾 Data Persistence
+Docker volumes are used
+Data persists even after container restarts
 
-🎯 What I Learned
-End-to-end CI/CD pipeline setup
-Docker-based deployment workflows
-AWS infrastructure integration (EC2, RDS, S3)
-Real-world DevOps practices
+🔄 Jenkins Pipeline Stages
+✅ Checkout Code
+✅ Build Docker Image
+✅ Test
+✅ Deploy to EC2
 
+🔗 Webhook Integration
+GitHub Webhook triggers Jenkins automatically
+No manual build required
+Ensures real-time CI/CD
 
-📬 Connect with Me
-LinkedIn: https://www.linkedin.com/in/sourick-chowdhury/
+⚠️ Challenges Faced
+Port conflict issues (5000 already in use)
+Containers not stopping properly
+Webhook not triggering (URL issues)
+Jenkins pipeline debugging
+MySQL startup delay
+
+🎯 Key Learnings
+End-to-end CI/CD pipeline implementation
+Docker multi-container orchestration
+Webhook-based automation
+Debugging real deployment issues
+Integrating application + infrastructure
+
+🧹 Cleanup
+docker compose down -v
+
+🚀 Future Improvements
+Add Nginx reverse proxy
+Use Docker Hub for versioning
+Kubernetes deployment
+Monitoring (Prometheus + Grafana)
+
+👨‍💻 Author
+
+Sourick Chowdhury
+Aspiring DevOps Engineer
